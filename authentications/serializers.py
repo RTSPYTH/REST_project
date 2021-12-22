@@ -94,6 +94,7 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
 
     def validate_email(self, value):
         if not User.objects.filter(email=value).exists():
@@ -104,9 +105,15 @@ class ResetPasswordSerializer(serializers.Serializer):
         temporary_password = str(random.randrange(100000, 999999))
         return temporary_password
 
-    def save(self, temporary_password):
-        # user = self.context['request'].user
-        user = self.context['request'].user
+    # def save(self, temporary_password):
+    #     # user = self.context['request'].user
+    #     user = self.context['request'].user
+    #     user.set_password(temporary_password)
+    #     user.save()
+    #     return user
+
+    def save(self, temporary_password, email):
+        user = User.objects.filter(email=email).first()
         user.set_password(temporary_password)
         user.save()
         return user

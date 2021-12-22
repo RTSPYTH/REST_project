@@ -71,7 +71,8 @@ class ResetPasswordView(UpdateAPIView):
 
         if serializer.is_valid(raise_exception=True):
             new_password = serializer.create_temporary_password()
-            user = serializer.save(new_password)
+            email1 = serializer.validated_data['email']
+            user = serializer.save(new_password, email1)
             if user:
                 reset_email_send(user, new_password)
                 return Response(serializer.data, status=status.HTTP_200_OK)
