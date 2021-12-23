@@ -3,8 +3,11 @@ from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.core.mail import send_mail
 from django.db import models
+from django.db.models.signals import post_save, post_delete
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+from main.settings import AUTH_USER_MODEL
 
 
 class UserManager(BaseUserManager):
@@ -50,20 +53,14 @@ class AbstractEmailUser(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         return self.email
 
-    # def email_user(self, subject, message, from_email=None, **kwargs):
-    #     """Sends an email to this User."""
-    #
-    #     send_mail(subject, message, from_email, [self.email], **kwargs)
-
 
 class User(AbstractEmailUser):
 
-    USER_TYPE_CHOICES = (
+    USER_TYPE = (
         ('owner', 'Owner'),
-        ('reader', 'Reader'),
     )
     user_type = models.CharField(
-        choices=USER_TYPE_CHOICES,
+        USER_TYPE,
         max_length=255, blank=True
     )
     full_name = models.CharField(
@@ -85,3 +82,20 @@ class User(AbstractEmailUser):
             name=self.full_name,
             email=self.email
         )
+
+
+
+
+# class Profile(models.Model):
+#     GENDER = (
+#         ('M', 'Male'),
+#         ('F', 'Female'),
+#     )
+#
+#     user = models.OneToOneField(AUTH_USER_MODEL)
+#     first_name = models.CharField(max_length=120, blank=False)
+#     last_name = models.CharField(max_length=120, blank=False)
+#     about_self = models.TextField()
+#     age = models.PositiveSmallIntegerField()
+#     gender = models.CharField(max_length=1, choices=GENDER)
+

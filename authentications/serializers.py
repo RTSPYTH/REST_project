@@ -4,6 +4,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 import random
 
+# from .models import Profile
+
 User = get_user_model()
 
 USER_TYPE_CHOICES = (
@@ -37,6 +39,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
+        # profile = Profile.objects.create(user=user)
+        # profile.save()
         return user
 
 
@@ -117,4 +121,10 @@ class ResetPasswordSerializer(serializers.Serializer):
         user.set_password(temporary_password)
         user.save()
         return user
+
+
+# class ProfileSerializers(serializers.ModelSerializer):
+#     class Meta:
+#         model = Profile
+#         fields = '__all__'
 
