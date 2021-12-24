@@ -8,7 +8,7 @@ User = get_user_model()
 
 class Favorite(models.Model):
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_favorite')
-    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='added_by', null=True)
+    added_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='added_by', null=True)
     added_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -84,18 +84,16 @@ class User(AbstractEmailUser):
         )
 
 
+class Profile(models.Model):
+    GENDER = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+    )
 
-
-# class Profile(models.Model):
-#     GENDER = (
-#         ('M', 'Male'),
-#         ('F', 'Female'),
-#     )
-#
-#     user = models.OneToOneField(AUTH_USER_MODEL)
-#     first_name = models.CharField(max_length=120, blank=False)
-#     last_name = models.CharField(max_length=120, blank=False)
-#     about_self = models.TextField()
-#     age = models.PositiveSmallIntegerField()
-#     gender = models.CharField(max_length=1, choices=GENDER)
+    user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=120, blank=False, null=True)
+    last_name = models.CharField(max_length=120, blank=False, null=True)
+    about_self = models.TextField()
+    age = models.PositiveSmallIntegerField(blank=False, null=True)
+    gender = models.CharField(max_length=1, choices=GENDER, null=True)
 

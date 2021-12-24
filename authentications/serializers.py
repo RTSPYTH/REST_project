@@ -4,7 +4,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 import random
 
-# from .models import Profile
+from .models import Profile
 
 User = get_user_model()
 
@@ -39,8 +39,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
-        # profile = Profile.objects.create(user=user)
-        # profile.save()
+        profile = Profile.objects.create(user=user)
+        profile.save()
         return user
 
 
@@ -109,13 +109,6 @@ class ResetPasswordSerializer(serializers.Serializer):
         temporary_password = str(random.randrange(100000, 999999))
         return temporary_password
 
-    # def save(self, temporary_password):
-    #     # user = self.context['request'].user
-    #     user = self.context['request'].user
-    #     user.set_password(temporary_password)
-    #     user.save()
-    #     return user
-
     def save(self, temporary_password, email):
         user = User.objects.filter(email=email).first()
         user.set_password(temporary_password)
@@ -123,8 +116,8 @@ class ResetPasswordSerializer(serializers.Serializer):
         return user
 
 
-# class ProfileSerializers(serializers.ModelSerializer):
-#     class Meta:
-#         model = Profile
-#         fields = '__all__'
+class ProfileSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
 

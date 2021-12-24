@@ -4,12 +4,15 @@ from django.contrib.auth import get_user_model, logout
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import UpdateAPIView, CreateAPIView
+from rest_framework.generics import UpdateAPIView, CreateAPIView, RetrieveUpdateAPIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from django.views import View
 
-from .serializers import RegisterSerializer, LoginSerializer, ChangePasswordSerializer, ResetPasswordSerializer
+from .permissions import IsOwnerOnly
+from .models import Profile
+from .serializers import RegisterSerializer, LoginSerializer, ChangePasswordSerializer, ResetPasswordSerializer, \
+    ProfileSerializers
 from .email import activation_email_send, reset_email_send
 
 
@@ -76,5 +79,15 @@ class ResetPasswordView(UpdateAPIView):
                 reset_email_send(user, new_password)
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
-# class CreateProfileUserView(APIView):
 
+class ProfileUserAPIView(RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializers
+    queryset = Profile.objects.all()
+    permission_classes = [IsOwnerOnly]
+    lookup_field = "id"
+
+    def list(self, request):
+        user = request.user
+        query = Profile.objects.all(user=user)
+        serializer = ProfileSerializers(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
