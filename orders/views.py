@@ -1,6 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
@@ -19,17 +16,16 @@ class OrderAPIView(viewsets.ModelViewSet):
         owner = request.user
         query = Order.objects.filter(ordered_by=owner)
         serializer = OrderSerializers(query, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def perform_create(self, serializer):
-        serializer.save(ordered_by=self.request.user)
         count = self.request.data.get('count')
         product_id = self.request.data.get('product_id')
         product = Product.objects.filter(id=product_id).first()
         total_price = product.price * count
+        serializer.save(ordered_by=self.request.user, total_price=total_price)
         product.quantity = product.quantity - count
         product.save()
-        order = Order.objects.create(total_price=total_price, product_id=product, count=count)
-        serializer = OrderSerializers(order)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
